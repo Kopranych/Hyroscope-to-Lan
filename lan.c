@@ -472,7 +472,8 @@ void tcp_step(tcp_packet_t *tcp, uint16_t num)
 }
 
 // process tcp packet
-void tcp_filter(eth_frame_t *frame, uint16_t len)
+void tcp_filter(eth_frame_t *frame, uint16_t len,int16_t A_X, int16_t A_Y,int16_t A_Z,int16_t G_X, 
+int16_t G_Y, int16_t G_Z)
 {
 	ip_packet_t *ip = (void*)(frame->data);
 	tcp_packet_t *tcp = (void*)(ip->data);
@@ -625,7 +626,7 @@ void tcp_filter(eth_frame_t *frame, uint16_t len)
 				if(len)
 				{
 					// feed data to application
-					tcp_data(id, frame, len, 1);
+					tcp_data(id, frame, len, 1, A_X, A_Y, A_Z, G_X, G_Y, G_Z);
 				}
 
 				// notify application
@@ -645,7 +646,7 @@ void tcp_filter(eth_frame_t *frame, uint16_t len)
 			}
 
 			// feed/read data to/from app
-			tcp_data(id, frame, len, 0);
+			tcp_data(id, frame, len, 0, A_X, A_Y, A_Z, G_X, G_Y, G_Z);
 
 			break;
 
@@ -679,7 +680,7 @@ void tcp_filter(eth_frame_t *frame, uint16_t len)
 				if(len)
 				{
 					// feed data to app
-					tcp_data(id, frame, len, 1);
+					tcp_data(id, frame, len, 1, A_X, A_Y, A_Z, G_X, G_Y, G_Z);
 				}
 
 				// notify application
@@ -698,7 +699,7 @@ void tcp_filter(eth_frame_t *frame, uint16_t len)
 				tcp_reply(frame, 0);
 
 				// give data to app
-				tcp_data(id, frame, len, 1);
+				tcp_data(id, frame, len, 1, A_X, A_Y, A_Z, G_X, G_Y, G_Z);
 			}
 
 			break;
@@ -951,7 +952,8 @@ void ip_resend(eth_frame_t *frame, uint16_t len)
 }
 
 // process IP packet
-void ip_filter(eth_frame_t *frame, uint16_t len)
+void ip_filter(eth_frame_t *frame, uint16_t len, int16_t A_X, int16_t A_Y,int16_t A_Z,int16_t G_X, 
+int16_t G_Y, int16_t G_Z)
 {
 	uint16_t hcs;
 	ip_packet_t *packet = (void*)(frame->data);
@@ -984,7 +986,7 @@ void ip_filter(eth_frame_t *frame, uint16_t len)
 
 #ifdef WITH_TCP
 			case IP_PROTOCOL_TCP:
-				tcp_filter(frame, len);
+				tcp_filter(frame, len, A_X, A_Y, A_Z, G_X, G_Y, G_Z);
 				break;
 #endif
 			}
@@ -1112,7 +1114,8 @@ void eth_reply(eth_frame_t *frame, uint16_t len)
 }
 
 // process Ethernet frame
-void eth_filter(eth_frame_t *frame, uint16_t len)
+void eth_filter(eth_frame_t *frame, uint16_t len, int16_t A_X, int16_t A_Y,int16_t A_Z,int16_t G_X, 
+int16_t G_Y, int16_t G_Z)
 {
 	if(len >= sizeof(eth_frame_t))
 	{
@@ -1122,7 +1125,7 @@ void eth_filter(eth_frame_t *frame, uint16_t len)
 			arp_filter(frame, len - sizeof(eth_frame_t));
 			break;
 		case ETH_TYPE_IP:
-			ip_filter(frame, len - sizeof(eth_frame_t));
+			ip_filter(frame, len - sizeof(eth_frame_t), A_X, A_Y, A_Z, G_X, G_Y, G_Z);
 			break;
 		}
 	}
@@ -1142,13 +1145,13 @@ void lan_init()
 #endif
 }
 
-void lan_poll()
+void lan_poll(int16_t A_X, int16_t A_Y,int16_t A_Z,int16_t G_X, int16_t G_Y, int16_t G_Z)
 {
 	uint16_t len;
 	eth_frame_t *frame = (void*)net_buf;
 
 	while((len = enc28j60_recv_packet(net_buf, sizeof(net_buf))))
-		eth_filter(frame, len);
+		eth_filter(frame, len, A_X, A_Y, A_Z, G_X, G_Y, G_Z);
 
 #ifdef WITH_DHCP
 	dhcp_poll();

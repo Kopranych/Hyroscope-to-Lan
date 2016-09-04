@@ -261,7 +261,7 @@ typedef enum dhcp_status_code {
 extern uint8_t net_buf[];
 
 void lan_init();
-void lan_poll();
+void lan_poll(int16_t A_X, int16_t A_Y,int16_t A_Z,int16_t G_X, int16_t G_Y, int16_t G_Z);
 uint8_t lan_up();
 
 void udp_packet(eth_frame_t *frame, uint16_t len);
@@ -271,7 +271,8 @@ void udp_reply(eth_frame_t *frame, uint16_t len);
 uint8_t tcp_listen(uint8_t id, eth_frame_t *frame);
 void tcp_opened(uint8_t id, eth_frame_t *frame);
 void tcp_closed(uint8_t id, uint8_t reset);
-void tcp_data(uint8_t id, eth_frame_t *frame, uint16_t len, uint8_t closing);
+void tcp_data(uint8_t id, eth_frame_t *frame, uint16_t len, uint8_t closing, int16_t A_X, 
+int16_t A_Y,int16_t A_Z, int16_t G_X, int16_t G_Y, int16_t G_Z);
 
 uint8_t tcp_open(uint32_t addr, uint16_t port, uint16_t local_port);
 void tcp_send(uint8_t id, eth_frame_t *frame, uint16_t len, uint8_t close);

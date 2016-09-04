@@ -38,7 +38,8 @@ void webif_init()
 	TCCR0 = (1<<WGM01)|(1<<WGM00)|(1<<COM01)|(1<<COM00)|(1<<CS02);
 }
 
-void webif_data(uint8_t id, eth_frame_t *frame, uint16_t len)
+void webif_data(uint8_t id, eth_frame_t *frame, uint16_t len, int16_t A_X, int16_t A_Y,int16_t A_Z,
+int16_t G_X, int16_t G_Y, int16_t G_Z)
 {
 	ip_packet_t *ip = (void*)(frame->data);
 	tcp_packet_t *tcp = (void*)(ip->data);
@@ -61,7 +62,7 @@ void webif_data(uint8_t id, eth_frame_t *frame, uint16_t len)
 
 		if(strcmp_P(url, PSTR("/")) == 0)
 		{
-			while(params)
+/*			while(params)
 			{
 				if((p = strchr(params, '&')))
 					*(p++) = 0;
@@ -77,13 +78,14 @@ void webif_data(uint8_t id, eth_frame_t *frame, uint16_t len)
 					if(val > 255) val = 255;
 					led_brightness = val;
 					
-					OCR0 = led_brightness;
+//					OCR0 = led_brightness;
 				}
 				
 				params = p;
 			}
+*/
 
-			itoa(led_brightness, str, 10);
+//			itoa(led_brightness, str, 10);
 
 			fill_buf_p(&buf_ptr, webif_200_header);
 			fill_buf_p(&buf_ptr, PSTR("<pre>"));
@@ -95,7 +97,7 @@ void webif_data(uint8_t id, eth_frame_t *frame, uint16_t len)
 
 		else if(strcmp_P(url, PSTR("/edit")) == 0)
 		{
-			itoa(led_brightness, str, 10);
+//			itoa(led_brightness, str, 10);
 
 			fill_buf_p(&buf_ptr, webif_200_header);
 			fill_buf_p(&buf_ptr, PSTR("<table border='1'>\r\n"));
@@ -107,16 +109,34 @@ void webif_data(uint8_t id, eth_frame_t *frame, uint16_t len)
 			fill_buf_p(&buf_ptr, PSTR("<th>Z</th>\r\n"));
 			fill_buf_p(&buf_ptr, PSTR("</tr>\r\n"));
 			fill_buf_p(&buf_ptr, PSTR("<tr>\r\n"));
-			fill_buf_p(&buf_ptr, PSTR("<th>Гироскоп</th>\r\n"));
-			fill_buf_p(&buf_ptr, PSTR("<th>243</th>\r\n"));
-			fill_buf_p(&buf_ptr, PSTR("<th>120</th>\r\n"));
-			fill_buf_p(&buf_ptr, PSTR("<th>0</th>\r\n"));
+			fill_buf_p(&buf_ptr, PSTR("<th>Гироскоп</th>\r\n"));			
+			itoa(G_X, str, 10);
+			fill_buf_p(&buf_ptr, PSTR("<th>'"));
+			fill_buf(&buf_ptr, str);
+			fill_buf_p(&buf_ptr, PSTR("'</th>\r\n"));
+			itoa(G_Y, str, 10);
+			fill_buf_p(&buf_ptr, PSTR("<th>'"));
+			fill_buf(&buf_ptr, str);
+			fill_buf_p(&buf_ptr, PSTR("'</th>\r\n"));
+			itoa(G_Z, str, 10);
+			fill_buf_p(&buf_ptr, PSTR("<th>'"));
+			fill_buf(&buf_ptr, str);
+			fill_buf_p(&buf_ptr, PSTR("'</th>\r\n"));
 			fill_buf_p(&buf_ptr, PSTR("</tr>\r\n"));
 			fill_buf_p(&buf_ptr, PSTR("<tr>\r\n"));
 			fill_buf_p(&buf_ptr, PSTR("<th>Акселерометр</th>\r\n"));
-			fill_buf_p(&buf_ptr, PSTR("<th>111</th>\r\n"));
-			fill_buf_p(&buf_ptr, PSTR("<th>21</th>\r\n"));
-			fill_buf_p(&buf_ptr, PSTR("<th>89</th>\r\n"));
+			itoa(A_X, str, 10);
+			fill_buf_p(&buf_ptr, PSTR("<th>'"));
+			fill_buf(&buf_ptr, str);
+			fill_buf_p(&buf_ptr, PSTR("'</th>\r\n"));
+			itoa(A_Y, str, 10);
+			fill_buf_p(&buf_ptr, PSTR("<th>'"));
+			fill_buf(&buf_ptr, str);
+			fill_buf_p(&buf_ptr, PSTR("'</th>\r\n"));
+			itoa(A_Z, str, 10);
+			fill_buf_p(&buf_ptr, PSTR("<th>'"));
+			fill_buf(&buf_ptr, str);
+			fill_buf_p(&buf_ptr, PSTR("'</th>\r\n"));
 			fill_buf_p(&buf_ptr, PSTR("</tr>\r\n"));
 //				fill_buf(&buf_ptr, str);
 //					fill_buf_p(&buf_ptr, PSTR("'>  "));
