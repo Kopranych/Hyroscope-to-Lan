@@ -11,7 +11,6 @@
 #include "LCD_HD44780.h"
 #include "TWI.h"
 
-
 void udp_packet(eth_frame_t *frame, uint16_t len) {}
 
 uint8_t tcp_listen(uint8_t id, eth_frame_t *frame)
@@ -163,8 +162,6 @@ ISR(TWI_vect)//вектор прерывания шины TWI
 
 	}
 }
-
-
 
 
 int main()
